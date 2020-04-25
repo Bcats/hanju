@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.web.dao.PlayMapper">
+
+    <select id="getPlayById" parameterType="int" resultType="Play">
+        SELECT
+            v.`v_id`,
+            v.`v_name`,
+            v.`status`,
+            vd.`director`,
+            v.`actor`
+        FROM
+        `video` AS v,`video_detail` AS vd
+        WHERE
+        v.`v_id` = #{v_id} AND vd.`v_id`=#{v_id}
+
+
+    </select>
+
+    <select id="getPlayUrlByUid" parameterType="int" resultType="PlayUrl">
+        SELECT
+        `url_id`,
+        `v_id`,
+        `class_id`,
+        `urlname`,
+        `url`,
+        `urltype`
+         FROM
+         `video_url`
+         WHERE
+         `url_id` = #{url_id}
+    </select>
+
+    <select id="getPlayUrlByVid" parameterType="int" resultType="PlayUrl">
+
+        SELECT
+        `url_id`,
+        `v_id`,
+        `class_id`,
+        `urlname`,
+        `url`,
+        `urltype`
+         FROM
+         `video_url`
+         WHERE
+         `v_id` = #{v_id}
+
+
+    </select>
+
+</mapper>

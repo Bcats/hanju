@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.admin.dao.AdminVideoMapper">
+
+
+    <select id="getAllVideo" resultType="AdminVideo">
+
+        SELECT
+        v.`v_id` ,
+        v.`v_name`,
+        v.`status`,
+        v.`beanscore`,
+        v.`updatetime`,
+        vc.`class_name`,
+        vd.`play`,
+        vd.`visit`,
+        vd.`year`
+        FROM video AS v,video_detail AS vd,video_class AS vc
+        WHERE
+        v.`v_id` = vd.`v_id` AND v.`class_id` = vc.`class_id`
+        ORDER BY updatetime DESC
+    </select>
+
+    <select id="getVideoByClassName" parameterType="string" resultType="AdminVideo">
+        SELECT
+        v.`v_id` ,
+        v.`v_name`,
+        v.`status`,
+        v.`beanscore`,
+        v.`updatetime`,
+        vc.`class_name`,
+        vd.`play`,
+        vd.`visit`,
+        vd.`year`
+        FROM video AS v,video_detail AS vd,video_class AS vc
+        WHERE
+        v.`v_id` = vd.`v_id` AND v.`class_id` = vc.`class_id` AND vc.`class_name` = #{class_name}
+        ORDER BY updatetime DESC
+    </select>
+
+    <select id="getVideoByVideoName" parameterType="string" resultType="AdminVideo">
+        SELECT
+        v.`v_id` ,
+        v.`v_name`,
+        v.`status`,
+        v.`beanscore`,
+        v.`updatetime`,
+        vc.`class_name`,
+        vd.`play`,
+        vd.`visit`,
+        vd.`year`
+        FROM video AS v,video_detail AS vd,video_class AS vc
+        WHERE
+        v.`v_id` = vd.`v_id`
+        AND v.`class_id` = vc.`class_id`
+        AND v.`v_name` like concat('%',#{key},'%')
+        ORDER BY updatetime DESC
+    </select>
+
+    <select id="getVideoByIds" parameterType="int" resultType="IClass">
+        select v_id,imgurl,class_name,download_imgurl from video,video_class
+        where v_id in
+        <foreach collection="v_ids" item="v_id" open="(" separator="," close=")">
+            #{v_id}
+        </foreach>
+        and video.class_id = video_class.class_id
+    </select>
+
+    <delete id="deleteVideoById" parameterType="int">
+        DELETE video,video_detail,video_url
+        FROM video,video_detail,video_url
+        WHERE video.v_id = video_detail.v_id
+        AND video.v_id = video_url.v_id
+        AND video.v_id IN (#{v_id})
+    </delete>
+
+    <delete id="deleteVideoByIds" parameterType="int">
+        DELETE video,video_detail,video_url
+        FROM video,video_detail,video_url
+        WHERE video.v_id = video_detail.v_id
+        AND video.v_id = video_url.v_id
+        AND video.v_id IN
+        <foreach collection="v_ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="deleteVideoUrlById" parameterType="int">
+        delete video_url from video_url
+        where v_id = #{v_id}
+    </delete>
+
+    <insert id="insertVideo" parameterType="AdminAddVideo">
+    <selectKey resultType="int" order="AFTER" keyProperty="v_id">
+        select LAST_INSERT_ID()
+    </selectKey>
+
+    insert into video(
+        v_name,
+        class_id,
+        actor,
+        status,
+        updatetime,
+        beanscore,
+        imgurl)
+    values (
+        #{v_name},
+        #{class_id},
+        #{actor},
+        #{status},
+        #{updatetime},
+        #{beanscore},
+        #{imgurl})
+    </insert>
+
+    <insert id="insertVideoDetail" parameterType="AdminAddVideo">
+        insert into video_detail(
+        v_id, director, `year`, visit, play, download, detail
+        )
+        values (
+        #{v_id},#{director},#{year},#{visit},#{play},#{download},#{detail}
+        )
+    </insert>
+
+    <insert id="insertVideoUrl" parameterType="java.util.ArrayList">
+        insert into video_url(
+        v_id, class_id, urlname, url, urltype
+        ) values
+        <foreach collection="adminAddVideoUrlList" item="urlL"  separator=",">
+            (#{urlL.v_id},#{urlL.class_id},#{urlL.urlname},#{urlL.url},#{urlL.urltype})
+        </foreach>
+    </insert>
+
+    <insert id="insertSlide" parameterType="AdminAddVideo">
+        insert into slide(
+        v_id, sort_id , slideimg
+        )values (
+        #{v_id},#{sort_id},#{slideimg}
+        )
+    </insert>
+
+    <select id="getEditVideo" parameterType="int" resultType="AdminAddVideo">
+        SELECT
+          v.`v_id` ,
+          v.`v_name`,
+          v.`status`,
+          v.`class_id`,
+          v.`beanscore`,
+          v.`actor`,
+          v.imgurl,
+          v.`updatetime`,
+          vd.`director`,
+          vd.`play`,
+          vd.`visit`,
+          vd.download,
+          vd.detail,
+          vd.`year`
+        FROM video AS v,video_detail AS vd
+        WHERE
+        v.v_id = #{v_id}  and vd.`v_id` = #{v_id}
+    </select>
+
+    <select id="getEditVideoUrl" parameterType="int" resultType="AdminAddVideoUrl">
+        select
+        v_id, class_id, urlname, url, urltype
+        from video_url
+        where v_id = #{v_id}
+
+    </select>
+
+    <select id="getEditSlide" parameterType="int" resultType="AdminAddVideo">
+        select
+        sort_id,
+        slideimg
+        from
+        slide
+        where v_id = #{v_id}
+    </select>
+
+    <select id="getVideoNameById" parameterType="int" resultType="AdminAddVideo">
+        select v_name from video where v_id = #{v_id}
+    </select>
+
+    <select id="getAllSlide" resultType="AdminAddVideo">
+        select
+        v_id,
+        sort_id,
+        slideimg
+        from
+        slide
+        order by sort_id asc
+    </select>
+
+    <update id="updateVideo" parameterType="AdminAddVideo">
+        update video as v,video_detail as vd set
+        v_name = #{v_name},
+        class_id = #{class_id},
+        actor = #{actor},
+        status = #{status},
+        updatetime = #{updatetime},
+        beanscore = #{beanscore},
+        imgurl = #{imgurl},
+        director = #{director},
+        `year` = #{year},
+        visit = #{visit},
+        play = #{play},
+        download = #{download},
+        detail = #{detail}
+        where v.v_id = #{v_id} and vd.v_id = #{v_id}
+    </update>
+
+    <update id="updateSlide" parameterType="AdminAddVideo">
+        update slide set
+        v_id = #{v_id},
+        sort_id = #{sort_id},
+        slideimg = #{slideimg}
+        where sort_id = #{sort_id}
+    </update>
+
+    <update id="updateImgById" >
+        update video set
+        imgurl = #{imgurl},
+        download_imgurl = #{download_imgurl}
+        where v_id = #{v_id};
+    </update>
+</mapper>

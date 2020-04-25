@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       default-lazy-init="true">
+
+    <!-- 配置安全管理器securityManager， 缓存技术: 缓存管理 realm:负责获取处理数据 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="myShiroRealm" />
+       <!-- <property name="cacheManager" ref="cacheManager" />
+-->
+    </bean>
+
+    <!-- 項目自定义的Realm,从数据库中获取用户的安全数据 -->
+    <bean id="myShiroRealm" class="cn.bcat.hanju.shiro.AdminUserRealm">
+        <!-- 配置缓存管理器-->
+   <!--     <property name="cacheManager" ref="cacheManager" />
+-->        <!-- 配置加密器 -->
+        <!--<property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"></property> &lt;!&ndash; 加密算法的名称 &ndash;&gt;
+                <property name="hashIterations" value="1024"></property> &lt;!&ndash; 配置加密的次数 &ndash;&gt;
+            </bean>
+        </property>-->
+    </bean>
+
+    <!-- 用户授权信息Cache -->
+    <!--<bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />-->
+
+    <!-- 必须配置lifecycleBeanPostProcessor:管理shiro中常见的对象 -->
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+    <bean id="logout" class="cn.bcat.hanju.shiro.MyLogoutFilter">
+        <property name="redirectUrl" value="/admin/login"/>
+    </bean>
+
+
+    <!-- shiro的核心配置:  配置shiroFileter id名必须与web.xml中的filtername保持一致 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/admin/login" />
+        <property name="successUrl" value="/admin/index" />
+        <property name="unauthorizedUrl" value="/admin/403" />
+        <property name="filters">
+            <map>
+                <entry key="logout" value-ref="logout" />
+            </map>
+        </property>
+
+        <!-- shiro过滤器的具体配置 -->
+        <!-- anon-匿名访问，authc-需要认证 -->
+        <!--anon  未认证可以访问
+            authc  认证后可以访问
+            perms 需要特定权限才能访问
+            roles 需要特定角色才能访问
+            user 需要特定用户才能访问
+            port  需要特定端口才能访问
+            reset  根据指定 HTTP 请求访问才能访问-->
+        <property name="filterChainDefinitions">
+            <value>
+
+                <!--/admin/edit.action?edit_v_id* = roles[admin]-->
+                /admin/logout = logout
+                /admin/loginCheckout = anon
+                /admin* = authc
+                /admin/** = authc
+            </value>
+        </property>
+    </bean>
+
+
+</beans>

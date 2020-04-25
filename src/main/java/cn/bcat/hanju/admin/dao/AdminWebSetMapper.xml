@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.admin.dao.AdminWebSetMapper">
+
+    <select id="getWebInfo" resultType="AdminWebSet">
+    SELECT
+      `title`,
+      `sencond_title`,
+      `domain`,
+      `m_domain`,
+      `keywords`,
+      `description`,
+      `beian`,
+      `index_visit_code`,
+      `web_status`,
+      `close_info`,
+      `logo`,
+      `m_logo`
+    FROM
+      `imovies`.`website`
+
+    </select>
+
+    <update id="setWebInfo" parameterType="AdminWebSet">
+      update
+      `imovies`.`website`
+      set
+          `title` = #{title},
+          `sencond_title` = #{sencond_title},
+          `domain` = #{domain},
+          `m_domain` = #{m_domain},
+          `keywords` = #{keywords},
+          `description` = #{description},
+          `beian` = #{beian},
+          `index_visit_code` = #{index_visit_code},
+          `web_status` = #{web_status},
+          `close_info` = #{close_info},
+          `logo` = #{logo},
+          `m_logo` = #{m_logo}
+      where `id` = 0
+
+    </update>
+
+</mapper>

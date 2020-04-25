@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.admin.dao.AdminIndexMapper">
+
+    <select id="getMenberNumber"  resultType="AdminIndex">
+        SELECT
+          COUNT(`id`) AS menber_number
+        FROM userdict
+        WHERE
+        usertype != 0
+  </select>
+    <select id="getVisitNumber" resultType="AdminIndex">
+        SELECT
+          visit AS visit_number
+        FROM
+          website
+    </select>
+    <select id="getVideoNumber" resultType="AdminIndex">
+        SELECT
+          COUNT(v_id) AS video_number
+        FROM
+          video
+    </select>
+    <select id="getClassNumberByName" parameterType="string" resultType="int">
+        SELECT
+          COUNT(v.v_id)
+        FROM
+          video AS v
+        WHERE
+        v.`class_id` = (SELECT class_id FROM video_class WHERE class_name = #{classname});
+</select>
+       <!-- SELECT
+          COUNT(v.v_id) AS zy_number
+        FROM
+          video AS v
+        WHERE
+        v.`class_id` = (SELECT class_id FROM video_class WHERE class_name = '综艺')
+
+        SELECT
+          COUNT(v.v_id) AS dy_number
+        FROM
+          video AS v
+        WHERE
+        v.`class_id` = (SELECT class_id FROM video_class WHERE class_name = '电影')-->
+
+    <select id="getCollectionNumber" resultType="AdminIndex">
+        SELECT COUNT(taskname) AS collection_number FROM collection
+
+
+    </select>
+
+    <select id="getVidsByClassName" parameterType="String" resultType="int">
+        select v_id from video
+        where video.class_id = (select class_id from video_class where class_name = #{class_name}) ;
+    </select>
+</mapper>

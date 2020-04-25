@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.web.dao.SoMapper">
+
+    <select id="getSoByName" parameterType="string" resultType="So">
+        SELECT
+            v.`v_id`,
+            v.`v_name`,
+            v.`actor`,
+            v.`status`,
+            v.`imgurl`,
+            vd.`detail`,
+            vd.`year`,
+            vd.`detail`,
+            vd.`director`,
+            vc.`class_name`
+        FROM
+        video AS v,video_class AS vc,video_detail AS vd
+        WHERE
+        v.`v_name` LIKE concat('%',#{keyword},'%')
+        AND
+        v.`v_id` = vd.`v_id`
+        AND
+        v.`class_id` = vc.`class_id`
+        order by updatetime desc
+    </select>
+
+</mapper>

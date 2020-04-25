@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.web.dao.ClassMapper">
+
+    <select id="getClassAll" resultType="IClass">
+        SELECT
+            v.`v_id`,
+            v.`v_name`,
+            v.`actor`,
+            v.`imgurl`,
+            v.`status`
+        FROM video AS v WHERE
+        v.`class_id` =
+        (SELECT class_id FROM video_class WHERE class_name = #{class})
+        ORDER BY
+        v.`updatetime` DESC
+    </select>
+
+    <select id="getClassByYear" resultType="IClass">
+        SELECT
+        v.`v_id`,
+        v.`v_name`,
+        v.`actor`,
+        v.`imgurl`,
+        v.`status`
+        FROM video AS v, video_detail AS vd WHERE
+        v.`v_id` = vd.`v_id`
+        AND
+        v.`class_id` =
+        (SELECT class_id FROM video_class WHERE class_name = #{class})
+        AND
+        vd.`year` = #{year}
+        ORDER BY
+        v.`updatetime` DESC
+    </select>
+
+    <select id="getClassBeforeYear" resultType="IClass">
+        SELECT
+        v.`v_id`,
+        v.`v_name`,
+        v.`actor`,
+        v.`imgurl`,
+        v.`status`
+        FROM video AS v, video_detail AS vd WHERE
+        v.`v_id` = vd.`v_id`
+        AND
+        v.`class_id` =
+        (SELECT class_id FROM video_class WHERE class_name = #{class})
+        AND
+        vd.`year` &lt; #{year}
+        ORDER BY
+        v.`updatetime` DESC
+    </select>
+
+</mapper>

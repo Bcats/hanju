@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.admin.dao.AdminLoginMapper">
+
+    <select id="getAdminUserByUserName" parameterType="String" resultType="AdminUser">
+        SELECT
+        `id`,
+        `username`,
+        `name`,
+        `password`,
+        `usertype`
+        FROM `userdict`
+        WHERE `username` = #{username}
+
+    </select>
+
+    <select id="getRolesByUserType" parameterType="int" resultType="String">
+        select
+        `roleName`
+        from
+        `roles`
+        where
+        `usertype` = #{usertype}
+
+
+
+    </select>
+
+    <select id="getPermissionByUserType" parameterType="int" resultType="String">
+        select
+        `permissionName`
+        from
+        `permission`
+        where
+        `usertype` = #{usertype}
+
+    </select>
+
+
+</mapper>

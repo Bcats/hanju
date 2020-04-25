@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bcat.hanju.web.dao.IndexMapper">
+
+    <select id="getWebBaseInfo" resultType="WebBaseInfo">
+
+        SELECT
+      `title`,
+      `sencond_title`,
+      `domain`,
+      `m_domain`,
+      `keywords`,
+      `description`,
+      `beian`,
+      `index_visit_code`,
+      `web_status`,
+      `close_info`,
+      `logo`,
+      `m_logo`
+    FROM
+      `imovies`.`website`
+    </select>
+
+    <select id="getLatestByName" parameterType="string" resultType="Index">
+        SELECT
+          `v_id`,
+          `v_name`,
+          `actor`,
+          `status`,
+          `imgurl`
+        FROM
+          `imovies`.`video`
+        where
+        `class_id`= ( select `class_id` from `video_class`  where `class_name` = #{className})
+        ORDER BY
+        `updatetime` desc
+
+        LIMIT 0, 12 ;
+
+    </select>
+
+
+
+</mapper>
